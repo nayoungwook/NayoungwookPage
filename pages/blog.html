@@ -1,8 +1,58 @@
-<li>
-    <a href=""></a>
-</li>
+<html lang="en">
 
-<script>
-    const reader = new FileReader();
-    var blogs = reader.readAsText('/blogs/*');
-</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gasoek+One&family=Noto+Sans+KR:wght@100..900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            margin-left: 14%;
+            margin-right: 14%;
+        }
+
+        .noto-sans-kr {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 50;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "Noto Sans KR";
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="text-align: center;">
+        <h4 style="font-style: italic;">"You and I are gonna live forever"</h4>
+    </div>
+    <hr>
+    <div style="text-align: left; margin-left: 20%;">
+        <h1 style="font-size: 200%;">Posts</h1>
+    </div>
+    <br>
+
+
+    <div style="margin-left: 20%;">
+        <a style="font-size: 180%;">Title</a>
+        <h5>2024-10-20</h5>
+    </div>
+    <br>
+
+    <script src="/../socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.emit('request_blogs', {id: socket.id});
+    </script>
+
+</body>
+
+</html>
