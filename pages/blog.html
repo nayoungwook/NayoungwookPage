@@ -39,18 +39,31 @@
     </div>
     <br>
 
-
-    <div style="margin-left: 20%;">
-        <a style="font-size: 180%;">Title</a>
-        <h5>2024-10-20</h5>
-    </div>
-    <br>
-
-    <script src="/../socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
+        function renderBlogData(blogData) {
+            for (let i = 0; i < Object.keys(blogData).length; i++) {
 
-        socket.emit('request_blogs', {id: socket.id});
+                let innerText = "<div style=\"margin-left: 20%;\">";
+                innerText += `<a style="font-size: 180%;" href="/blog/${blogData[i]['title']}">${blogData[i]['title']}</a>`;
+                innerText += `<h5>${blogData[i]['date']}</h5>`;
+                innerText += `</div>`;
+                innerText += `<br>`;
+
+                document.body.innerHTML += innerText;
+
+            }
+        }
+
+        async function requestBlogData() {
+            const response = await fetch('./blogData',
+                {
+                    method: 'GET',
+                });
+            const data = await response.json();
+
+            await renderBlogData(data);
+        }
+        requestBlogData();
     </script>
 
 </body>
