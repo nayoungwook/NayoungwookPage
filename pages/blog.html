@@ -41,7 +41,7 @@
 
     <script>
         function renderBlogData(blogData) {
-            for (let i = 0; i < Object.keys(blogData).length; i++) {
+            for (let i = Object.keys(blogData).length - 1; i >= 0; i--) {
 
                 let innerText = "<div style=\"margin-left: 20%;\">";
                 innerText += `<a style="font-size: 180%;" href="/blog/${blogData[i]['title']}">${blogData[i]['title']}</a>`;
@@ -50,7 +50,6 @@
                 innerText += `<br>`;
 
                 document.body.innerHTML += innerText;
-
             }
         }
 

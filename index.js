@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const { join } = require('path');
+const path = require('path');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 
 const PORT = 80;
 
@@ -35,14 +37,66 @@ app.get('/write', (req, res) => {
     res.sendFile(__dirname + '/pages/write.html');
 });
 
-app.get('/verify', (req, res) => {
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, __dirname + '/blogs');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+function getDate() {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+
+    const dateString = year + '-' + month + '-' + day;
+
+    return dateString;
+}
+
+const upload = multer({ storage });
+app.post('/upload', upload.fields([
+    { name: 'html', maxCount: 1 },
+    { name: 'files', maxCount: 100 }
+]), (req, res) => {
+    if (!req.files) {
+        return res.status(400).send('Failed to upload file');
+    }
+
+    if(!req.files['html']){
+        console.error('Error with uploading html file.');
+        return;
+    }
+
     try{
-        let payload = jwt.verify(req.cookies.token, KEY);
-        console.log(payload.name + ' logined');
+        let htmlFile = req.files['html'];
         
-        res.json({success: true})
-    }catch(err){
-        console.log('failed to login');
+        let date = getDate();
+        
+        let blogDataJson = JSON.parse(fs.readFileSync(__dirname + '/blogs/blogData.json'));
+        let newBlogData = {};
+        
+        let htmlFileName = htmlFile[0].filename;
+        
+        if(htmlFileName.substr(htmlFileName.length - 5, htmlFileName.length - 1) != '.html'){
+            console.error('Error with uploading html file because of wrong file format');
+            return;
+        }
+        
+        newBlogData['title'] = htmlFileName.substr(0, htmlFileName.length - 5);
+        newBlogData['date'] = date;
+        
+        blogDataJson[Object.keys(blogDataJson).length] = newBlogData;
+        
+        fs.writeFileSync(__dirname + '/blogs/blogData.json', JSON.stringify(blogDataJson));
+        
+        return res.send({message: 'success'});
+    }catch(e){
+        return res.status(400).send('Failed to upload file');
     }
 });
 

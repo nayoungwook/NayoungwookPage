@@ -1,13 +1,61 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        body {
+            margin: 5%;
+        }
+    </style>
 </head>
+
 <body>
+    <div style="text-align: center;">
+        <h1>Write some blog.</h1>
+
+        <input type="file" id="html" name="html"><br><br>
+        <input type="file" id="files" name="files" multiple><br><br>
+        <input type="submit" id="submit">
+    </div>
+
     <script>
+        let submitButton = document.querySelector('#submit');
+
+        submitButton.onclick = async () => {
+            let attributeFiles = document.querySelector('#files').files;
+            let htmlFile = document.querySelector('#html').files[0];
+
+            let data = new FormData();
+
+            if (!htmlFile || htmlFile.name.substr(htmlFile.name.length - 5, htmlFile.name.length - 1) != '.html') {
+                alert('You must upload your html blog file. Idiot');
+            } else {
+                data.append('html', htmlFile);
+            }
+
+            for (let i = 0; i < attributeFiles.length; i++) {
+                data.append('files', attributeFiles[i]);
+            }
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: data,
+                });
+
+                if (response) {
+                    location.href = '/';
+                }
+            } catch (error) {
+                console.error('오류:', error);
+            }
+        };
+
         async function requestBlogData() {
-            const response = await fetch('./verify',
+            const response = await fetch('/verify',
                 {
                     method: 'GET',
                 });
@@ -17,4 +65,5 @@
         requestBlogData();
     </script>
 </body>
+
 </html>
